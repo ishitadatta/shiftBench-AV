@@ -1,0 +1,29 @@
+{
+  "benchmark": {
+    "name": "sqlite_domain_shift_benchmark",
+    "seed": 7,
+    "calibration_bins": 12
+  },
+  "dataset": {
+    "source": "sqlite",
+    "db_path": "examples/demo_samples.db",
+    "table": "samples",
+    "limit": 1000
+  },
+  "scenarios": [
+    {
+      "name": "baseline",
+      "description": "No perturbations",
+      "operations": []
+    },
+    {
+      "name": "sensor_fault_injection",
+      "description": "Simulated corruption and dropout",
+      "operations": [
+        { "type": "gaussian_noise", "target": "all", "std": 0.07 },
+        { "type": "dropout", "target": "camera", "probability": 0.12 },
+        { "type": "bias_drift", "target": "lidar", "offset": -0.04 }
+      ]
+    }
+  ]
+}

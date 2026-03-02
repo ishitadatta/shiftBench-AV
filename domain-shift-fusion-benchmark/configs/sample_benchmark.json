@@ -1,0 +1,46 @@
+{
+  "benchmark": {
+    "name": "domain_shift_fusion_baseline",
+    "seed": 42,
+    "calibration_bins": 10
+  },
+  "dataset": {
+    "source": "synthetic",
+    "n_samples": 1500,
+    "seed": 123
+  },
+  "scenarios": [
+    {
+      "name": "baseline",
+      "description": "No perturbations",
+      "operations": []
+    },
+    {
+      "name": "camera_rain_shift",
+      "description": "Camera blur and confidence degradation in rain",
+      "operations": [
+        { "type": "gaussian_noise", "target": "camera", "std": 0.09 },
+        { "type": "uncertainty_inflation", "target": "camera", "factor": 1.5 }
+      ]
+    },
+    {
+      "name": "lidar_fog_dropout",
+      "description": "Sparse LiDAR returns in dense fog",
+      "operations": [
+        { "type": "dropout", "target": "lidar", "probability": 0.22 },
+        { "type": "uncertainty_inflation", "target": "lidar", "factor": 1.6 }
+      ]
+    },
+    {
+      "name": "compound_night_shift",
+      "description": "Multimodal degradation under low light and weather",
+      "operations": [
+        { "type": "gaussian_noise", "target": "camera", "std": 0.11 },
+        { "type": "dropout", "target": "lidar", "probability": 0.15 },
+        { "type": "bias_drift", "target": "radar", "offset": 0.05 },
+        { "type": "temporal_jitter", "target": "all", "window": 4 },
+        { "type": "uncertainty_inflation", "target": "all", "factor": 1.2 }
+      ]
+    }
+  ]
+}

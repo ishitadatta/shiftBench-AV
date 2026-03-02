@@ -1,0 +1,38 @@
+{
+  "benchmark_name": "domain_shift_fusion_baseline",
+  "seed": 42,
+  "scenarios": [
+    {
+      "name": "baseline",
+      "n_samples": 1500,
+      "accuracy": 1.0,
+      "negative_log_likelihood": 0.159389,
+      "expected_calibration_error": 0.521308,
+      "uncertainty_risk_correlation": 0.0
+    },
+    {
+      "name": "camera_rain_shift",
+      "n_samples": 1500,
+      "accuracy": 1.0,
+      "negative_log_likelihood": 0.166637,
+      "expected_calibration_error": 0.520067,
+      "uncertainty_risk_correlation": 0.0
+    },
+    {
+      "name": "lidar_fog_dropout",
+      "n_samples": 1500,
+      "accuracy": 1.0,
+      "negative_log_likelihood": 0.167752,
+      "expected_calibration_error": 0.522199,
+      "uncertainty_risk_correlation": 0.0
+    },
+    {
+      "name": "compound_night_shift",
+      "n_samples": 1500,
+      "accuracy": 0.984667,
+      "negative_log_likelihood": 0.254918,
+      "expected_calibration_error": 0.485004,
+      "uncertainty_risk_correlation": 0.225849
+    }
+  ]
+}

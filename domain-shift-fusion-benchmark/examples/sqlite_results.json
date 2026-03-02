@@ -1,0 +1,22 @@
+{
+  "benchmark_name": "sqlite_domain_shift_benchmark",
+  "seed": 7,
+  "scenarios": [
+    {
+      "name": "baseline",
+      "n_samples": 1000,
+      "accuracy": 1.0,
+      "negative_log_likelihood": 0.165763,
+      "expected_calibration_error": 0.490244,
+      "uncertainty_risk_correlation": 0.0
+    },
+    {
+      "name": "sensor_fault_injection",
+      "n_samples": 1000,
+      "accuracy": 1.0,
+      "negative_log_likelihood": 0.184801,
+      "expected_calibration_error": 0.50037,
+      "uncertainty_risk_correlation": 0.0
+    }
+  ]
+}
