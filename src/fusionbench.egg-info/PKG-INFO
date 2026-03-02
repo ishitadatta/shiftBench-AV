@@ -1,3 +1,21 @@
+Metadata-Version: 2.4
+Name: fusionbench
+Version: 0.1.0
+Summary: Open benchmarking toolkit for uncertainty-aware sensor fusion under domain shift
+Author: Ishita Datta
+License: MIT
+Keywords: sensor-fusion,domain-shift,robustness,benchmarking,uncertainty
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Dynamic: license-file
+
 # Domain Shift / Benchmarking / Fusion Robustness
 
 Open-source Python toolkit for uncertainty-aware sensor-fusion benchmarking under domain shift and sensor degradation.

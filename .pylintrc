@@ -1,0 +1,15 @@
+[MAIN]
+persistent = no
+
+[FORMAT]
+max-line-length = 120
+
+[MESSAGES CONTROL]
+disable =
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring,
+    trailing-newlines,
+    too-few-public-methods,
+    too-many-locals,
+    broad-exception-caught
