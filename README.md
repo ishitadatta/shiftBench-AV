@@ -1,6 +1,6 @@
 # Domain Shift / Benchmarking / Fusion Robustness
 
-Open-source Python toolkit for **uncertainty-aware sensor-fusion benchmarking** under **domain shift** and **sensor degradation**.
+Open-source Python toolkit for uncertainty-aware sensor-fusion benchmarking under domain shift and sensor degradation.
 
 This repository is designed for research and reproducible benchmarking workflows, with a practical focus on:
 - uncertainty-aware fusion evaluation
