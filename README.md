@@ -70,7 +70,7 @@ domain-shift-fusion-benchmark/
 ### 1. Create and activate virtual environment
 
 ```bash
-cd /Users/hrudhairajasekhar/Projects/ishita-datta/domain-shift-fusion-benchmark
+cd /Users/Projects/ishita-datta/domain-shift-fusion-benchmark
 python3 -m venv .venv
 source .venv/bin/activate
 ```
