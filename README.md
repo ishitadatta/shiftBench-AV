@@ -92,7 +92,7 @@ pip install -e .[dev]
 If your environment cannot download packages, you can still run this project directly:
 
 ```bash
-cd /Users/hrudhairajasekhar/Projects/ishita-datta/domain-shift-fusion-benchmark
+cd /domain-shift-fusion-benchmark
 PYTHONPATH=src python3 -m fusionbench.cli.main run --config configs/sample_benchmark.json --output examples/sample_results.json
 ```
 
