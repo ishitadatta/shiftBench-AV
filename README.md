@@ -10,7 +10,10 @@ This repository is designed for research and reproducible benchmarking workflows
 
 ## Capabilities
 
-- Uncertainty-aware fusion (inverse-variance weighting)
+- Multiple fusion methods:
+  - `inverse_variance` (baseline)
+  - `adaptive_reliability` (disagreement-aware reliability weighting)
+  - `counterfactual_consensus` (novel method in this repo)
 - Sensor perturbation engine:
   - `gaussian_noise`
   - `dropout`
@@ -34,8 +37,20 @@ This repository is designed for research and reproducible benchmarking workflows
 configs/
   sample_benchmark.json
   sqlite_benchmark.json
+  nuscenes_mini_benchmark.json
+  nuscenes_mini_benchmark_adaptive.json
+  nuscenes_mini_benchmark_novel.json
+scripts/
+  build_nuscenes_sqlite.py
+  generate_result_graphs.py
 examples/
   run_sqlite_demo.sh
+  nuscenes_mini_results_baseline_again.json
+  nuscenes_mini_results_adaptive.json
+  nuscenes_mini_results_novel.json
+  figures/
+    nll_comparison.svg
+    uncertainty_correlation_comparison.svg
 src/fusionbench/
   bench/
     metrics.py
@@ -105,6 +120,14 @@ fusionbench run \
 
 The command prints JSON to terminal and writes output to `examples/sample_results.json`.
 
+## Dataset used for advanced experiment
+
+The advanced experiment in this README was run on **nuScenes v1.0-mini** converted into the toolkit SQLite format (`sample_id`, `label`, `camera_*`, `lidar_*`, `radar_*` columns).
+
+- Converted DB path: `data/nuscenes_mini_samples.db`
+- Conversion script: `scripts/build_nuscenes_sqlite.py`
+- Note: the raw dataset itself is **not committed** to this repository.
+
 ## SQLite-backed benchmarking workflow
 
 ### 1. Create demo SQLite dataset
@@ -161,9 +184,14 @@ Top-level JSON keys:
 {
   "name": "domain_shift_fusion_baseline",
   "seed": 42,
-  "calibration_bins": 10
+  "calibration_bins": 10,
+  "fusion_method": "inverse_variance"
 }
 ```
+
+For advanced fusion methods you can also provide:
+- `fusion_method`: `inverse_variance` | `adaptive_reliability` | `counterfactual_consensus`
+- Method parameters, e.g. `uncertainty_power`, `disagreement_gain`, `agreement_gamma`, `counterfactual_beta`
 
 ### `dataset` (synthetic)
 
@@ -211,6 +239,35 @@ Each scenario supports an `operations` list of perturbations.
 - **ECE**: calibration gap between confidence and empirical accuracy (lower is better)
 - **Uncertainty-Risk Correlation**: whether higher uncertainty tracks prediction failures
 
+## nuScenes mini experiment results
+
+### Compared methods
+- `inverse_variance` (baseline)
+- `adaptive_reliability`
+- `counterfactual_consensus` (novel)
+
+### Numeric summary
+
+| Scenario | Method | Accuracy | NLL | ECE | Uncertainty-Risk Corr |
+|---|---|---:|---:|---:|---:|
+| baseline | inverse_variance | 0.655941 | 1.385254 | 0.322141 | -0.008785 |
+| baseline | adaptive_reliability | 0.655941 | 0.711751 | 0.193716 | 0.338457 |
+| baseline | counterfactual_consensus | 0.660891 | 1.259207 | 0.322773 | 0.259458 |
+| weather_and_occlusion_shift | inverse_variance | 0.655941 | 1.431917 | 0.298746 | -0.028407 |
+| weather_and_occlusion_shift | adaptive_reliability | 0.655941 | 0.785094 | 0.202290 | 0.181156 |
+| weather_and_occlusion_shift | counterfactual_consensus | 0.658416 | 1.667270 | 0.305797 | 0.174910 |
+
+### Graphs
+
+![NLL comparison](examples/figures/nll_comparison.svg)
+
+![Uncertainty-risk correlation comparison](examples/figures/uncertainty_correlation_comparison.svg)
+
+### Quick interpretation
+- `adaptive_reliability` gives the best probabilistic quality on this dataset (lower NLL, lower ECE).
+- `counterfactual_consensus` improves uncertainty-risk correlation substantially over baseline and slightly improves accuracy.
+- Under stronger perturbation, `counterfactual_consensus` keeps better uncertainty correlation than baseline, but NLL remains an open optimization target.
+
 ## Testing
 
 Run the unit test suite:
@@ -241,15 +298,26 @@ pytest
 - SQLite table errors
   - Confirm the target table exists and columns match expected schema.
 
+## References
+
+1. Holger Caesar et al., "nuScenes: A multimodal dataset for autonomous driving", CVPR 2020.  
+   https://arxiv.org/abs/1903.11027
+2. nuScenes dataset website:  
+   https://www.nuscenes.org/
+
 ## License
 
 MIT (see `LICENSE`).
 
 ## Last verified
 
-Verified on **March 2, 2026** with:
+Verified on **March 4, 2026** with:
 
-- `PYTHONPATH=src PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q` -> `4 passed`
+- `PYTHONPATH=src PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q` -> `6 passed`
 - `PYTHONPATH=src python3 -m fusionbench.cli.main run --config configs/sample_benchmark.json --output examples/sample_results.json`
 - `PYTHONPATH=src python3 -m fusionbench.cli.main make-demo-db --db-path examples/demo_samples.db --n-samples 1500 --seed 11`
 - `PYTHONPATH=src python3 -m fusionbench.cli.main run --config configs/sqlite_benchmark.json --output examples/sqlite_results.json`
+- `python3 scripts/build_nuscenes_sqlite.py --nuscenes-meta-dir data/v1.0-mini --out-db data/nuscenes_mini_samples.db`
+- `PYTHONPATH=src python3 -m fusionbench.cli.main run --config configs/nuscenes_mini_benchmark.json --output examples/nuscenes_mini_results_baseline_again.json`
+- `PYTHONPATH=src python3 -m fusionbench.cli.main run --config configs/nuscenes_mini_benchmark_adaptive.json --output examples/nuscenes_mini_results_adaptive.json`
+- `PYTHONPATH=src python3 -m fusionbench.cli.main run --config configs/nuscenes_mini_benchmark_novel.json --output examples/nuscenes_mini_results_novel.json`

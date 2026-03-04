@@ -1,3 +1,7 @@
-from fusionbench.fusion.uncertainty import InverseVarianceFusion
+from fusionbench.fusion.uncertainty import (
+    AdaptiveReliabilityFusion,
+    CounterfactualConsensusFusion,
+    InverseVarianceFusion,
+)
 
-__all__ = ["InverseVarianceFusion"]
+__all__ = ["InverseVarianceFusion", "AdaptiveReliabilityFusion", "CounterfactualConsensusFusion"]

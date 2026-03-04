@@ -1,0 +1,35 @@
+{
+  "benchmark": {
+    "name": "nuscenes_mini_domain_shift_benchmark_adaptive",
+    "seed": 11,
+    "calibration_bins": 10,
+    "fusion_method": "adaptive_reliability",
+    "uncertainty_power": 1.7,
+    "disagreement_power": 1.3,
+    "disagreement_gain": 2.0,
+    "temperature_gain": 2.8
+  },
+  "dataset": {
+    "source": "sqlite",
+    "db_path": "data/nuscenes_mini_samples.db",
+    "table": "samples",
+    "limit": 404
+  },
+  "scenarios": [
+    {
+      "name": "baseline",
+      "description": "No perturbations",
+      "operations": []
+    },
+    {
+      "name": "weather_and_occlusion_shift",
+      "description": "Camera quality drop and radar/lidar stress under adverse conditions",
+      "operations": [
+        { "type": "gaussian_noise", "target": "camera", "std": 0.09 },
+        { "type": "dropout", "target": "lidar", "probability": 0.10 },
+        { "type": "bias_drift", "target": "radar", "offset": -0.05 },
+        { "type": "uncertainty_inflation", "target": "all", "factor": 1.2 }
+      ]
+    }
+  ]
+}

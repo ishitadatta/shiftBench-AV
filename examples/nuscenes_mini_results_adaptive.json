@@ -1,0 +1,22 @@
+{
+  "benchmark_name": "nuscenes_mini_domain_shift_benchmark_adaptive",
+  "seed": 11,
+  "scenarios": [
+    {
+      "name": "baseline",
+      "n_samples": 404,
+      "accuracy": 0.655941,
+      "negative_log_likelihood": 0.711751,
+      "expected_calibration_error": 0.193716,
+      "uncertainty_risk_correlation": 0.338457
+    },
+    {
+      "name": "weather_and_occlusion_shift",
+      "n_samples": 404,
+      "accuracy": 0.655941,
+      "negative_log_likelihood": 0.785094,
+      "expected_calibration_error": 0.20229,
+      "uncertainty_risk_correlation": 0.181156
+    }
+  ]
+}

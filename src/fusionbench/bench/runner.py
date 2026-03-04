@@ -7,7 +7,11 @@ from fusionbench.core.types import BenchmarkResult, ScenarioResult, Sample
 from fusionbench.data.sqlite_store import load_samples_from_database
 from fusionbench.data.synthetic import generate_synthetic_samples
 from fusionbench.domain_shift.scenarios import ShiftScenario, built_in_scenarios
-from fusionbench.fusion.uncertainty import InverseVarianceFusion
+from fusionbench.fusion.uncertainty import (
+    AdaptiveReliabilityFusion,
+    CounterfactualConsensusFusion,
+    InverseVarianceFusion,
+)
 from fusionbench.perturbations.operators import PerturbationEngine
 
 
@@ -47,6 +51,27 @@ def _resolve_scenarios(config_scenarios: List[Dict] | None) -> List[ShiftScenari
     return resolved
 
 
+def _build_fusion_model(benchmark_cfg: Dict):
+    method = str(benchmark_cfg.get("fusion_method", "inverse_variance")).strip().lower()
+    if method == "inverse_variance":
+        return InverseVarianceFusion()
+    if method == "adaptive_reliability":
+        return AdaptiveReliabilityFusion(
+            uncertainty_power=float(benchmark_cfg.get("uncertainty_power", 1.7)),
+            disagreement_power=float(benchmark_cfg.get("disagreement_power", 1.3)),
+            disagreement_gain=float(benchmark_cfg.get("disagreement_gain", 2.0)),
+            temperature_gain=float(benchmark_cfg.get("temperature_gain", 2.8)),
+        )
+    if method == "counterfactual_consensus":
+        return CounterfactualConsensusFusion(
+            evidence_power=float(benchmark_cfg.get("evidence_power", 1.5)),
+            agreement_gamma=float(benchmark_cfg.get("agreement_gamma", 2.0)),
+            counterfactual_beta=float(benchmark_cfg.get("counterfactual_beta", 6.0)),
+        )
+
+    raise ValueError(f"Unsupported fusion method: {method}")
+
+
 def run_benchmark(config: Dict) -> BenchmarkResult:
     benchmark_cfg = config.get("benchmark", {})
     benchmark_name = str(benchmark_cfg.get("name", "fusion_robustness_benchmark"))
@@ -57,7 +82,7 @@ def run_benchmark(config: Dict) -> BenchmarkResult:
     scenarios = _resolve_scenarios(config.get("scenarios"))
 
     perturb_engine = PerturbationEngine(seed=seed)
-    fusion_model = InverseVarianceFusion()
+    fusion_model = _build_fusion_model(benchmark_cfg)
 
     scenario_results: List[ScenarioResult] = []
 
@@ -108,5 +133,3 @@ def benchmark_result_to_dict(result: BenchmarkResult) -> Dict:
         "seed": result.seed,
         "scenarios": rows,
     }
-
-
